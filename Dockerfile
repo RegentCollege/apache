@@ -1,5 +1,6 @@
 FROM php:7-apache
 MAINTAINER codyrigg
+ENV directory_name=parking
 
 RUN apt-get update && \
     apt-get install -y vim \
@@ -21,14 +22,14 @@ RUN docker-php-ext-install -j$(nproc) mysqli pdo pdo_mysql \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd
 
-RUN mkdir /var/www/parking && chown www-data: /var/www/parking -R && \
-    chmod 0755 /var/www/parking -R
-RUN cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/parking.conf && \
-    sed -i 's,/var/www/html,/var/www/parking,g' /etc/apache2/sites-available/parking.conf && \
-    sed -i 's,${APACHE_LOG_DIR},/var/log/apache2,g' /etc/apache2/sites-available/parking.conf && \
-    a2ensite parking.conf && a2dissite 000-default.conf && a2enmod rewrite
+RUN mkdir /var/www/$directory_name && chown www-data: /var/www/$directory_name -R && \
+    chmod 0755 /var/www/$directory_name -R
+RUN cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/$directory_name.conf && \
+    sed -i 's,/var/www/html,/var/www/$directory_name,g' /etc/apache2/sites-available/$directory_name.conf && \
+    sed -i 's,${APACHE_LOG_DIR},/var/log/apache2,g' /etc/apache2/sites-available/$directory_name.conf && \
+    a2ensite $directory_name.conf && a2dissite 000-default.conf && a2enmod rewrite
 
-WORKDIR /var/www/parking
+WORKDIR /var/www/$directory_name
 
 EXPOSE 80
 
