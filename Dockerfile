@@ -23,10 +23,11 @@ RUN docker-php-ext-install -j$(nproc) mysqli pdo pdo_mysql \
 
 RUN mkdir /var/www/parking && chown www-data: /var/www/parking -R && \
     chmod 0755 /var/www/parking -R
-RUN cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/parking.conf && \
-    sed -i 's,/var/www/html,/var/www/parking,g' /etc/apache2/sites-available/parking.conf && \
-    sed -i 's,${APACHE_LOG_DIR},/var/log/apache2,g' /etc/apache2/sites-available/parking.conf && \
-    a2ensite parking.conf && a2dissite 000-default.conf && a2enmod rewrite
+	
+COPY ./config/parking.conf /etc/apache2/sites-available/parking.conf
+RUN mkdir -p /var/www/parking/current
+
+RUN a2ensite parking.conf && a2dissite 000-default.conf && a2enmod rewrite
 
 WORKDIR /var/www/parking
 
