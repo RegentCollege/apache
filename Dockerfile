@@ -20,6 +20,9 @@ RUN docker-php-ext-configure intl \
 RUN docker-php-ext-install -j$(nproc) mysqli pdo pdo_mysql \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd
+    
+# Install composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 RUN mkdir /var/www/parking && chown www-data: /var/www/parking -R && \
     chmod 0755 /var/www/parking -R
